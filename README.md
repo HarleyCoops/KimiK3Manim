@@ -1,4 +1,44 @@
-# KimiK2Manim
+# Kimi3Manim
+
+Math and physics animations imagined end-to-end by a swarm of **Kimi K3**
+agents and rendered with Manim.
+
+## The K3 Agent Swarm (new)
+
+The pipeline was rebuilt on launch day of `kimi-k3` (July 16, 2026) as six
+specialist agents exchanging strictly validated JSON artifacts, ending in a
+closed render/critique loop on real rendered frames:
+
+| Stage | Agent | Model | Output artifact |
+|---|---|---|---|
+| 1 | Concept Scout | kimi-k3 | KnowledgeGraph |
+| 2 | Mathematical Enricher | kimi-k3 | MathEnrichment |
+| 3 | Visual Designer | kimi-k3 (vision) | VisualSpec |
+| 4 | Narrative Composer | kimi-k3 | Narrative |
+| 5 | Manim Coder | kimi-k2.7-code | SceneBundle (runnable scenes) |
+| 6 | Render Critic | kimi-k3 (vision) | CritiqueReport |
+
+A deterministic supervisor sequences the agents, validates every artifact,
+renders with Manim, and loops coder/critic until the critic passes.
+
+```bash
+# one command: concept in, mp4 out
+uv run python -m k3_agents.supervisor "gauge invariance in electromagnetism"
+```
+
+The showcase scene lives at
+[manim_scenes/k3_harmonic_universe.py](manim_scenes/k3_harmonic_universe.py):
+
+```bash
+uv run manim -qh manim_scenes/k3_harmonic_universe.py K3HarmonicUniverse
+```
+
+See [docs/KIMI_K3_REBUILD_PLAN.md](docs/KIMI_K3_REBUILD_PLAN.md) for the
+architecture rationale and API research. The original K2 pipeline below is
+retained for reference; note that the `kimi-k2` model series (including
+`kimi-k2-0905-preview`) was discontinued by Moonshot on May 25, 2026.
+
+---
 
 
 <div align="center">
