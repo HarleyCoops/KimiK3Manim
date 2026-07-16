@@ -60,3 +60,6 @@ output/
 partial_movie_files/
 **/partial_movie_files/
 
+
+# Manim render cache (regenerable)
+media/

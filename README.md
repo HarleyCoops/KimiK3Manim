@@ -9,7 +9,7 @@
 
 ## Minimal Surfaces: Mathematical Soap Films in 3D Space
 
-![Minimal Surfaces Animation](media/videos/minimal_surfaces_scene/480p15/MinimalSurfaces3D.gif)
+![Minimal Surfaces Animation](assets/MinimalSurfaces3D.gif)
 
 *Translucent 3D minimal surfaces (catenoid, helicoid, Costa, Enneper) visualized as mathematical soap films with zero mean curvature H = 0. Generated using Kimi K2's enhanced "liminal solid" prompt technique.*
 
@@ -36,11 +36,11 @@ The KimiK2Manim pipeline uses **4 sequential agents** that progressively enrich 
 ---
 
 
-![Slow-Fast Network Architecture](media/videos/SlowFastNetwork/480p15/SlowFastNetwork.gif)
+![Slow-Fast Network Architecture](assets/SlowFastNetwork.gif)
 
 *Unnormalized Linear Transformers via [Jürgen Schmidhuber](https://people.idsia.ch/~juergen/1991-unnormalized-linear-transformer.html) and [@SchmidhuberAI](https://twitter.com/SchmidhuberAI) - The 1991 ULTRA (Unnormalized Linear Transformer) demonstrating how a SLOW hypernetwork programs FAST task-specific network weights through additive outer products of KEY and VALUE vectors.*
 
-![Rhombicosidodecahedron Animation](media/videos/render_rhombicosidodecahedron/480p15/partial_movie_files/ArtisticRhombicosidodecahedron/rhombicosidodecahedron_preview.gif)
+![Rhombicosidodecahedron Animation](assets/rhombicosidodecahedron_preview.gif)
 
 *Rhombicosidodecahedron with 62 faces, golden ratio geometry, and dynamic multi-axis rotation*
 
@@ -671,7 +671,7 @@ See [`manim_utils/README_BOUNDED_SCENE.md`](manim_utils/README_BOUNDED_SCENE.md)
 
 <div align="center">
 
-![Harmonic Theorem Animation](media/videos/harmonic_theorem/480p15/harmonic_theorem_preview.gif)
+![Harmonic Theorem Animation](assets/harmonic_theorem_preview.gif)
 
 *45-second demonstration of the Harmonic Division Theorem with step-by-step LaTeX equations*
 
