@@ -1,7 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/1185818338_1039491547_223132457.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/624642324_4217992463_476047065.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/624642324_53125047_1499127896.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/624642324_2844360058_2227690985.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/624642324_3051863571_2906533675.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/KimiNewton/480p15/partial_movie_files/NewtvonsSecondLawSimple/624642324_2552855209_2679482260.mp4'

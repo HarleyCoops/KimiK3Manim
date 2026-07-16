@@ -1,4 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/render_rhombicosidodecahedron/480p15/partial_movie_files/ArtisticRhombicosidodecahedron/4080640546_2964692131_4103994035.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/render_rhombicosidodecahedron/480p15/partial_movie_files/ArtisticRhombicosidodecahedron/127771980_499239308_704247423.mp4'
-file 'file:C:/Users/chris/KimiK2Manim/media/videos/render_rhombicosidodecahedron/480p15/partial_movie_files/ArtisticRhombicosidodecahedron/127771980_3878620900_2538789766.mp4'
