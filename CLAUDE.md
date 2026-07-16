@@ -145,7 +145,7 @@ Each agent processes the tree recursively, ensuring all prerequisite nodes are e
 
 - Wraps OpenAI Python SDK with Moonshot AI endpoint
 - Base URL: `https://api.moonshot.ai/v1`
-- Model: `kimi-k2-0905-preview` (configurable via `KIMI_MODEL`)
+- Model: `kimi-k3` (configurable via `KIMI_MODEL`)
 - Supports OpenAI-compatible tool calling (function calling)
 - Handles authentication and error formatting
 

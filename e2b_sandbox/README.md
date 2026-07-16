@@ -142,7 +142,7 @@ Create a `.env` file with:
 MOONSHOT_API_KEY=sk-your-key-here
 
 # Optional
-KIMI_MODEL=kimi-k2-0905-preview
+KIMI_MODEL=kimi-k3
 KIMI_ENABLE_THINKING=heavy  # heavy, medium, light
 KIMI_USE_TOOLS=true
 SANDBOX_MODE=exploration    # exploration, rendering, interactive, batch

@@ -235,7 +235,7 @@ class KimiClient:
             api_key=api_key or MOONSHOT_API_KEY,
             base_url=base_url or "https://api.moonshot.cn/v1"
         )
-        self.model = model or "kimi-k2-0905-preview"
+        self.model = model or "kimi-k3"
 ```
 
 #### API Call Features
@@ -429,9 +429,10 @@ Create a `.env` file in the project root:
 
 ```bash
 MOONSHOT_API_KEY=your_api_key_here
-KIMI_MODEL=kimi-k2-0905-preview  # Optional: specify model name (Kimi K2 model)
-KIMI_USE_TOOLS=true        # Optional: enable/disable tools
-KIMI_ENABLE_THINKING=heavy  # Optional: thinking mode - "heavy" (max reasoning), "medium", "light", or "true"/"false"
+KIMI_MODEL=kimi-k3                 # Flagship model for the K3 agent swarm
+KIMI_MODEL_CODE=kimi-k2.7-code     # Code-gen model for Manim Coder
+KIMI_REASONING_EFFORT=max          # K3 reasoning effort (thinking always on)
+KIMI_USE_TOOLS=true                # Optional: enable/disable tools
 ```
 
 ### 3. Basic Usage
@@ -839,9 +840,11 @@ KimiK2Manim/
 All configuration is in `config.py` or via environment variables:
 
 - `MOONSHOT_API_KEY`: Your Moonshot AI API key (required)
-- `KIMI_MODEL`: Kimi K2 model name (default: "kimi-k2-0905-preview")
-- `KIMI_USE_TOOLS`: Enable tool calling (default: "true")
-- `KIMI_ENABLE_THINKING`: Thinking mode - "heavy" (max reasoning), "medium", "light", or "true"/"false" (default: "true")
+- `KIMI_MODEL`: Kimi model name (default: `"kimi-k3"`)
+- `KIMI_MODEL_CODE`: Code-gen model for Manim Coder (default: `"kimi-k2.7-code"`)
+- `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `"max"`)
+- `KIMI_USE_TOOLS`: Enable tool calling (default: `"true"`)
+- `KIMI_ENABLE_THINKING`: Legacy K2 thinking toggle; ignored by kimi-k3
 
 **Note**: Python 3.13+ is required for Kosong integration. Use `uv python install 3.13` or upgrade Python manually.
 

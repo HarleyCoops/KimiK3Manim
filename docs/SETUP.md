@@ -25,9 +25,11 @@
 All configuration is in `KimiK2Thinking/config.py` or via environment variables:
 
 - `MOONSHOT_API_KEY`: Your Moonshot AI API key (required)
-- `KIMI_MODEL`: Kimi K2 model name (default: "kimi-k2-0905-preview")
+- `KIMI_MODEL`: Kimi model name (default: `"kimi-k3"`)
+- `KIMI_MODEL_CODE`: Code-gen model for Manim Coder (default: `"kimi-k2.7-code"`)
+- `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `"max"`)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: "true")
-- `KIMI_ENABLE_THINKING`: Thinking mode - "heavy" (max reasoning), "medium", "light", or "true"/"false" (default: "true")
+- `KIMI_ENABLE_THINKING`: Legacy K2 thinking toggle; ignored by kimi-k3
 
 ## How It Works
 
@@ -62,15 +64,15 @@ MOONSHOT_API_KEY=your_key_here
 ```
 
 ### Model Not Found
-Check the Moonshot AI documentation for the correct Kimi K2 model name:
-- `kimi-k2-0905-preview` (recommended)
-- `kimi-k2` (or other Kimi K2 variants)
-
-See: https://platform.moonshot.ai/docs/guide/kimi-k2-quickstart#powerful-agent-building-capabilities
+Use current Kimi models (the kimi-k2 series was discontinued 2026-05-25):
+- `kimi-k3` (recommended default for the agent swarm)
+- `kimi-k2.7-code` (Manim scene generation)
 
 Update in `.env`:
 ```
-KIMI_MODEL=kimi-k2-0905-preview
+KIMI_MODEL=kimi-k3
+KIMI_MODEL_CODE=kimi-k2.7-code
+KIMI_REASONING_EFFORT=max
 ```
 
 ## Next Steps

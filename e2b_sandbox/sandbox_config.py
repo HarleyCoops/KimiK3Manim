@@ -24,7 +24,7 @@ class SandboxConfig:
     # API Configuration
     moonshot_api_key: str
     moonshot_base_url: str = "https://api.moonshot.ai/v1"
-    model: str = "kimi-k2-0905-preview"
+    model: str = "kimi-k3"
 
     # Thinking Configuration
     thinking_mode: str = "heavy"  # heavy, medium, light
@@ -56,7 +56,7 @@ class SandboxConfig:
         return cls(
             moonshot_api_key=os.getenv("MOONSHOT_API_KEY", ""),
             moonshot_base_url=os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.ai/v1"),
-            model=os.getenv("KIMI_MODEL", "kimi-k2-0905-preview"),
+            model=os.getenv("KIMI_MODEL", "kimi-k3"),
             thinking_mode=os.getenv("KIMI_ENABLE_THINKING", "heavy"),
             use_tools=os.getenv("KIMI_USE_TOOLS", "true").lower() == "true",
             mode=SandboxMode(os.getenv("SANDBOX_MODE", "exploration")),
