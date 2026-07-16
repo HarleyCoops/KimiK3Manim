@@ -60,4 +60,12 @@ class K3Agent:
             response_format=k3_response_format(self.output_model),
         )
         text = self.client.get_text_content(response)
+        if not text or not text.strip():
+            choice = response.get("choices", [{}])[0]
+            raise RuntimeError(
+                f"Model returned empty content "
+                f"(finish_reason={choice.get('finish_reason')}, "
+                f"usage={response.get('usage')}); likely exhausted the token "
+                f"budget on reasoning. Lower the reasoning effort or shrink the prompt."
+            )
         return self.output_model.model_validate(json.loads(text))

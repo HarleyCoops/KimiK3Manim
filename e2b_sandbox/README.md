@@ -405,14 +405,6 @@ Error: MOONSHOT_API_KEY is required
 
 Solution: Ensure `.env` file contains valid API key
 
-### Import Errors
-
-```
-ImportError: No module named 'kosong'
-```
-
-Solution: Run `pip install -r requirements.txt`
-
 ### Manim Rendering Fails
 
 ```

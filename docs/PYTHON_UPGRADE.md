@@ -1,4 +1,4 @@
-# Python Upgrade & Kosong Installation Complete ✅
+# Python Upgrade Complete ✅
 
 ## What Was Done
 
@@ -8,14 +8,9 @@
 
 2. **Initialized UV Project**
    - Created `pyproject.toml` with proper project metadata
-   - Set `requires-python = ">=3.13"` to match Kosong requirements
+   - Set `requires-python = ">=3.13"`
 
-3. **Installed Kosong**
-   - Added `kosong>=0.21.0` as a dependency
-   - Verified installation: Kosong imports successfully ✅
-   - Verified Kimi provider: `kosong.chat_provider.kimi` imports successfully ✅
-
-4. **Updated Dependencies**
+3. **Updated Dependencies**
    - Migrated from `requirements.txt` to `pyproject.toml`
    - Maintained existing dependencies (openai, python-dotenv)
    - Added optional dev dependencies (pytest, black)
@@ -47,26 +42,9 @@ uv sync
 uv run python -m agents.prerequisite_explorer_kimi
 ```
 
-## Next Steps
-
-1. **Refactor Agents to Use Kosong**
-   - See `docs/KOSONG_REFACTORING.md` for detailed guide
-   - Example implementation: `agents/enrichment_chain_kosong.py`
-
-2. **Test Kosong Integration**
-   - Test the refactored mathematical enricher
-   - Verify tool calling works correctly
-   - Compare outputs with original implementation
-
-3. **Gradual Migration**
-   - Keep both implementations during transition
-   - Test thoroughly before removing old code
-
 ## Verification
 
 ✅ Python 3.13.3 installed  
-✅ Kosong 0.21.0 installed  
-✅ Kimi provider available  
 ✅ Project configured for Python 3.13+
 
 ## Notes
@@ -74,4 +52,3 @@ uv run python -m agents.prerequisite_explorer_kimi
 - The virtual environment is automatically managed by `uv`
 - All dependencies are locked in `uv.lock` (auto-generated)
 - To use Python 3.13 outside uv: `uv python install 3.13` then use `python3.13` command
-

@@ -2,6 +2,8 @@
 
 Status: DRAFT (July 16, 2026 - written on K3 launch day)
 
+Note (2026-07): superseded - the Manim Coder now runs on kimi-k3; kimi-k2.7-code was discontinued 2026-05 and kosong support was removed.
+
 This document plans the full rebuild of the Math-To-Manim / KimiK2Manim concept
 as a series of Kimi K3 agents, replacing the current K2-era 4-stage enrichment
 pipeline. It is grounded in API research performed on launch day; items marked

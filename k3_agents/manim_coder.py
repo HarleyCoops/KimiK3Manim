@@ -1,6 +1,6 @@
 """Stage 5: Manim Coder - turns the screenplay into runnable scenes.
 
-Runs on the cheaper code-specialized model (kimi-k2.7-code by default).
+Runs on kimi-k3, the same model family as the rest of the swarm.
 The supervisor executes the emitted files and feeds tracebacks back here
 for repair, so this agent also handles fix-up rounds.
 """

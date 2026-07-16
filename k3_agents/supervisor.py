@@ -66,7 +66,9 @@ class Supervisor:
     # -- artifact persistence ------------------------------------------------
 
     def _save(self, run_dir: Path, name: str, artifact) -> None:
-        (run_dir / f"{name}.json").write_text(artifact.model_dump_json(indent=2))
+        (run_dir / f"{name}.json").write_text(
+            artifact.model_dump_json(indent=2), encoding="utf-8"
+        )
 
     # -- rendering -----------------------------------------------------------
 
@@ -74,7 +76,7 @@ class Supervisor:
         for f in bundle.files:
             target = run_dir / "scenes" / f.path
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(f.content)
+            target.write_text(f.content, encoding="utf-8")
 
     def _render(self, run_dir: Path, bundle: SceneBundle) -> tuple[bool, str, Optional[Path]]:
         """Render every scene file; returns (ok, combined_log, video_path)."""

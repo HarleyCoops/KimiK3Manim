@@ -91,6 +91,8 @@ class KimiClient:
         self.client = OpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
+            timeout=float(os.getenv("KIMI_HTTP_TIMEOUT", "1800")),
+            max_retries=int(os.getenv("KIMI_HTTP_RETRIES", "1")),
         )
 
     def chat_completion(

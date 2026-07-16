@@ -3,6 +3,13 @@
 Math and physics animations imagined end-to-end by a swarm of **Kimi K3**
 agents and rendered with Manim.
 
+[![Euler's Identity — rendered by the K3 agent swarm](assets/euler_identity_hero.png)](assets/EulerIdentityFilm.mp4)
+
+*Hero: **Euler's Identity** — a 3.5-minute film written, staged, rendered, and
+self-critiqued by the six-agent K3 swarm from a single verbose LaTeX-rich
+prompt. Click the collage for the full mp4
+([EulerIdentityFilm.mp4](assets/EulerIdentityFilm.mp4)).*
+
 ## The K3 Agent Swarm (new)
 
 The pipeline was rebuilt on launch day of `kimi-k3` (July 16, 2026) as six
@@ -15,7 +22,7 @@ closed render/critique loop on real rendered frames:
 | 2 | Mathematical Enricher | kimi-k3 | MathEnrichment |
 | 3 | Visual Designer | kimi-k3 (vision) | VisualSpec |
 | 4 | Narrative Composer | kimi-k3 | Narrative |
-| 5 | Manim Coder | kimi-k2.7-code | SceneBundle (runnable scenes) |
+| 5 | Manim Coder | kimi-k3 | SceneBundle (runnable scenes) |
 | 6 | Render Critic | kimi-k3 (vision) | CritiqueReport |
 
 A deterministic supervisor sequences the agents, validates every artifact,
@@ -103,7 +110,6 @@ KimiK2Manim uses the Kimi K2 model (via Moonshot AI's OpenAI-compatible API) to:
 - **ToolAdapter**: Converts tool calls to verbose instructions when tools aren't available
 - **KimiPrerequisiteExplorer**: Builds knowledge trees recursively
 - **KimiEnrichmentPipeline**: Complete enrichment chain (math → visuals → narrative)
-- **Kosong Integration**: Official Moonshot AI agent abstraction layer for unified LLM interactions
 - **Standalone Package**: No dependencies on parent projects
 
 ## Agent Pipeline Flow
@@ -370,7 +376,7 @@ This enriched data can then be used to generate complete Manim Python code that 
 
 ### Prerequisites
 
-**Python 3.13+ Required**: KimiK2Manim now uses [Kosong](https://github.com/MoonshotAI/kosong), the official LLM abstraction layer from Moonshot AI, which requires Python 3.13+.
+**Python 3.13+ Required**: KimiK2Manim requires Python 3.13 or newer (`requires-python = ">=3.13"` in `pyproject.toml`).
 
 ### Using UV (Recommended)
 
@@ -411,7 +417,6 @@ pip install -e .
 ### Dependencies
 
 Required packages:
-- `kosong>=0.21.0` - Official Moonshot AI agent abstraction layer
 - `openai>=1.0.0` - OpenAI-compatible API client
 - `python-dotenv>=1.0.0` - Environment variable management
 
@@ -430,7 +435,7 @@ Create a `.env` file in the project root:
 ```bash
 MOONSHOT_API_KEY=your_api_key_here
 KIMI_MODEL=kimi-k3                 # Flagship model for the K3 agent swarm
-KIMI_MODEL_CODE=kimi-k2.7-code     # Code-gen model for Manim Coder
+KIMI_MODEL_CODE=kimi-k3              # Code-gen model for Manim Coder
 KIMI_REASONING_EFFORT=max          # K3 reasoning effort (thinking always on)
 KIMI_USE_TOOLS=true                # Optional: enable/disable tools
 ```
@@ -782,7 +787,6 @@ KimiK2Manim/
 │   ├── __init__.py
 │   ├── prerequisite_explorer_kimi.py  # Knowledge tree builder
 │   ├── enrichment_chain.py     # Math, visual, narrative enrichment (legacy)
-│   └── enrichment_chain_kosong.py  # Kosong-based enrichment (new)
 │
 ├── manim_scenes/                # Manim animation scripts
 │   ├── README.md               # Scene documentation
@@ -827,7 +831,6 @@ KimiK2Manim/
 │
 ├── docs/                        # Documentation
 │   ├── ARCHITECTURE.md
-│   ├── KOSONG_REFACTORING.md    # Kosong migration guide
 │   └── PYTHON_UPGRADE.md        # Python 3.13 upgrade guide
 │
 └── dev/                         # Development and experimental files
@@ -841,12 +844,12 @@ All configuration is in `config.py` or via environment variables:
 
 - `MOONSHOT_API_KEY`: Your Moonshot AI API key (required)
 - `KIMI_MODEL`: Kimi model name (default: `"kimi-k3"`)
-- `KIMI_MODEL_CODE`: Code-gen model for Manim Coder (default: `"kimi-k2.7-code"`)
+- `KIMI_MODEL_CODE`: Code-gen model for Manim Coder (default: `"kimi-k3"`)
 - `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `"max"`)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: `"true"`)
 - `KIMI_ENABLE_THINKING`: Legacy K2 thinking toggle; ignored by kimi-k3
 
-**Note**: Python 3.13+ is required for Kosong integration. Use `uv python install 3.13` or upgrade Python manually.
+**Note**: Python 3.13+ is required. Use `uv python install 3.13` or upgrade Python manually.
 
 ## Key Components
 
@@ -920,50 +923,10 @@ pytest tests/ -v -k "not api"
 
 The package follows a layered architecture with agent orchestration:
 
-1. **Client Layer**: `KimiClient` handles all API communication with Moonshot AI (legacy) or **Kosong** abstraction layer (new)
+1. **Client Layer**: `KimiClient` handles all API communication with Moonshot AI
 2. **Adapter Layer**: `ToolAdapter` converts tool calls to verbose instructions when tools aren't available
 3. **Agent Layer**: 4 sequential agents orchestrate knowledge tree building and enrichment
 4. **Orchestrator**: `KimiEnrichmentPipeline` coordinates the 3 enrichment agents
-
-### Kosong Integration
-
-KimiK2Manim now supports [Kosong](https://github.com/MoonshotAI/kosong), the official LLM abstraction layer from Moonshot AI. Kosong provides:
-
-- **Unified Message Structures**: `Message` class for consistent LLM interactions
-- **Async Tool Orchestration**: Automatic tool calling loops with `kosong.step()`
-- **Type-Safe Tools**: Pydantic models for tool parameters with validation
-- **Provider Abstraction**: Easy switching between LLM providers
-- **Reduced Boilerplate**: Less manual tool call parsing and response handling
-
-#### Using Kosong-Based Agents
-
-Example Kosong-based mathematical enricher:
-
-```python
-from agents.enrichment_chain_kosong import KosongMathematicalEnricher
-from kosong.chat_provider.kimi import Kimi
-from kosong.message import Message
-import kosong
-
-# Create Kosong Kimi client
-kimi = Kimi(
-    base_url="https://api.moonshot.ai/v1",
-    api_key=os.getenv("MOONSHOT_API_KEY"),
-    model="kimi-k2-turbo-preview",
-)
-
-# Use Kosong-based enricher
-enricher = KosongMathematicalEnricher(client=kimi)
-enriched_tree = await enricher.enrich_tree(tree)
-```
-
-#### Migration Path
-
-- **Current**: Custom `KimiClient` wrapper with manual tool parsing
-- **New**: Kosong abstraction with automatic tool orchestration
-- **Status**: Both implementations available; Kosong version in `agents/enrichment_chain_kosong.py`
-
-See `docs/KOSONG_REFACTORING.md` for detailed migration guide.
 
 ### Agent Orchestration
 
@@ -1169,8 +1132,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 - [Moonshot AI Platform](https://platform.moonshot.ai/)
 - [Kimi K2 Documentation](https://platform.moonshot.ai/docs/guide/use-kimi-k2-thinking-model)
-- [Kosong - LLM Abstraction Layer](https://github.com/MoonshotAI/kosong) - Official Moonshot AI agent framework
-- [Kosong Documentation](https://moonshotai.github.io/kosong/)
 - [Manim Documentation](https://docs.manim.community/)
 
 ## Support

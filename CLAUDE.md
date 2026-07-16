@@ -62,8 +62,8 @@ cp .env.template .env
 
 ### K3 Agent Swarm (current)
 
-The current pipeline is [k3_agents/](k3_agents/): six specialist agents on
-`kimi-k3` (plus `kimi-k2.7-code` for scene generation) exchanging strict
+The current pipeline is [k3_agents/](k3_agents/): six specialist agents, all
+running on `kimi-k3`, exchanging strict
 json_schema artifacts defined in [schemas/artifacts.py](schemas/artifacts.py),
 orchestrated by a deterministic [supervisor](k3_agents/supervisor.py) that
 renders with Manim and drives a coder/critic repair loop.
@@ -149,13 +149,6 @@ Each agent processes the tree recursively, ensuring all prerequisite nodes are e
 - Supports OpenAI-compatible tool calling (function calling)
 - Handles authentication and error formatting
 
-**Kosong Integration** (NEW - Python 3.13+ only)
-
-- [agents/enrichment_chain_kosong.py](agents/enrichment_chain_kosong.py) provides Kosong-based enrichers
-- Uses `kosong.step()` for automatic tool orchestration loops
-- Type-safe tool parameters via Pydantic models
-- Message abstraction layer for LLM interactions
-
 **ToolAdapter** ([tool_adapter.py](tool_adapter.py))
 
 - Converts OpenAI-style tool definitions to verbose natural language instructions
@@ -203,7 +196,7 @@ All configuration in [config.py](config.py) and `.env`:
 **Optional**:
 
 - `KIMI_MODEL`: Model name (default: `kimi-k3`)
-- `KIMI_MODEL_CODE`: Code-gen model for the Manim Coder (default: `kimi-k2.7-code`)
+- `KIMI_MODEL_CODE`: Code-gen model for the Manim Coder (default: `kimi-k3`)
 - `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `max`; the only
   accepted value at K3 launch)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: `true`)
@@ -264,9 +257,8 @@ Generated Manim scenes follow this pattern:
 
 ## Python Version Requirements
 
-- **Python 3.13+** required for Kosong integration
+- **Python 3.13+** required (`requires-python = ">=3.13"` in pyproject.toml)
 - Use `uv` for version management (recommended)
-- Legacy code works with Python 3.8+ but without Kosong features
 
 ## Testing Strategy
 
@@ -292,8 +284,3 @@ Generated Manim scenes follow this pattern:
 
 - Tree printing uses ASCII-safe characters on Windows
 - No action needed - handled automatically
-
-### Import errors with Kosong
-
-- Requires Python 3.13+
-- Use legacy `enrichment_chain.py` for older Python versions
