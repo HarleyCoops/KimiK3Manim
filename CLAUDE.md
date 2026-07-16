@@ -60,7 +60,25 @@ cp .env.template .env
 
 ## High-Level Architecture
 
-### 4-Stage Agent Pipeline
+### K3 Agent Swarm (current)
+
+The current pipeline is [k3_agents/](k3_agents/): six specialist agents on
+`kimi-k3` (plus `kimi-k2.7-code` for scene generation) exchanging strict
+json_schema artifacts defined in [schemas/artifacts.py](schemas/artifacts.py),
+orchestrated by a deterministic [supervisor](k3_agents/supervisor.py) that
+renders with Manim and drives a coder/critic repair loop.
+
+```bash
+uv run python -m k3_agents.supervisor "your concept here"
+```
+
+K3 API notes (differ from K2):
+- temperature/top_p are fixed server-side on kimi-k3; the client strips them
+- thinking is always on; effort via KIMI_REASONING_EFFORT (only "max" today)
+- structured output via response_format json_schema strict mode
+- responses may include reasoning_content alongside content
+
+### Legacy: 4-Stage Agent Pipeline (K2 era)
 
 KimiK2Manim uses a sequential enrichment pipeline where each agent progressively enhances a `KnowledgeNode` tree:
 
@@ -180,18 +198,17 @@ All configuration in [config.py](config.py) and `.env`:
 
 **Required**:
 
-- `MOONSHOT_API_KEY`: Your API key from platform.moonshot.ai
+- `MOONSHOT_API_KEY`: Your API key from platform.kimi.ai (formerly platform.moonshot.ai)
 
 **Optional**:
 
-- `KIMI_MODEL`: Model name (default: `kimi-k2-0905-preview`)
+- `KIMI_MODEL`: Model name (default: `kimi-k3`)
+- `KIMI_MODEL_CODE`: Code-gen model for the Manim Coder (default: `kimi-k2.7-code`)
+- `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `max`; the only
+  accepted value at K3 launch)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: `true`)
-- `KIMI_ENABLE_THINKING`: Thinking mode
-  - `"heavy"`: Maximum reasoning effort (best for complex concepts)
-  - `"medium"`: Balanced reasoning
-  - `"light"`: Minimal reasoning
-  - `"true"`: Default thinking mode
-  - `"false"`: Disable thinking mode
+- `KIMI_ENABLE_THINKING`: Legacy K2-only thinking toggle; ignored by kimi-k3
+  (thinking is always on there)
 
 ## Important Patterns
 
