@@ -189,9 +189,15 @@ if not tool_calls:
 
 All configuration in [config.py](config.py) and `.env`:
 
-**Required**:
+**Authentication** (default: subscription, no API key):
 
-- `MOONSHOT_API_KEY`: Your API key from platform.kimi.ai (formerly platform.moonshot.ai)
+- `KIMI_AUTH_MODE`: `subscription` (default) uses the Kimi Code CLI OAuth
+  login via the Kimi Agent SDK - install the CLI, run `kimi`, then `/login`
+  with Kimi Code OAuth. `api-key` uses `MOONSHOT_API_KEY` against
+  api.moonshot.ai directly.
+- `MOONSHOT_API_KEY`: Platform API key; required only in api-key mode (also
+  used as automatic fallback if the CLI/SDK is unavailable, and for vision
+  stages until the SDK accepts image input)
 
 **Optional**:
 
