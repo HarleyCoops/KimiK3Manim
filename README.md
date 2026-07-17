@@ -45,6 +45,21 @@ architecture rationale and API research. The original K2 pipeline below is
 retained for reference; note that the `kimi-k2` model series (including
 `kimi-k2-0905-preview`) was discontinued by Moonshot on May 25, 2026.
 
+## The Self-Improvement Flywheel (RL program)
+
+The swarm's render/critique loop doubles as a data engine for reinforcement
+learning: every render becomes training data. A Qwen student model trains
+with GRPO on Prime Intellect against render-verified rewards, while K3 stays
+on as scout, designer, teacher, and judge — until the student is good enough
+to become the swarm's Manim Coder itself.
+
+[![K3 × Prime Intellect RL self-improvement flywheel](assets/k3_rl_flywheel.png)](docs/K3_EPIC_VISUALIZER_RL_BLUEPRINT.md)
+
+Full plan: [docs/K3_EPIC_VISUALIZER_RL_BLUEPRINT.md](docs/K3_EPIC_VISUALIZER_RL_BLUEPRINT.md)
+(research: [Manim CE 3D briefing](research/manim_ce_3d_briefing.md),
+[Prime Intellect RL stack briefing](research/prime-intellect-rl-stack-briefing.md);
+diagram source: [dev/make_flywheel_asset.py](dev/make_flywheel_asset.py)).
+
 ---
 
 
