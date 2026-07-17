@@ -68,6 +68,51 @@ prompt-renderer dependency, not Manim rendering. The environment leaves Prime's
 platform `renderers` package installed and patches Verifiers' client binding at
 load time when needed.
 
+## Reward v2: render-verified scoring
+
+`reward_mode="render"` upgrades the static rubric into a composite that actually
+executes the candidate scene:
+
+```text
+score = 0.25 * static_bundle + 0.45 * render_gate + 0.30 * visual_heuristics
+```
+
+- **Render gate (0.45)** — `render_reward.py` runs `manim -ql` on the candidate
+  and scores 1 only when an mp4 of at least 1024 bytes exists. Backends:
+  `local_subprocess` (dev and single-GPU runs; Windows-safe) and
+  `prime_sandbox` (managed sandbox with a pre-baked manim+PyAV+LaTeX image for
+  training at scale, via `M2M2_SANDBOX_IMAGE`).
+- **Visual heuristics (0.30)** — `visual_reward.py` decodes the mp4 with PyAV
+  and scores non-black-pixel ratio, frame-to-frame motion, colorfulness, and
+  duration. These are deliberately charm-resistant proxies: an empty black
+  scene or a frozen frame scores near zero even though it "renders".
+- **Infra masking** — a missing manim binary or sandbox failure returns
+  `infra_error`: the render components score 0 and the ledger reports
+  `masked=True`, so the training side can drop the completion instead of
+  learning from infrastructure noise (the i3-code pattern).
+
+Validate locally with:
+
+```bash
+.venv/Scripts/python.exe dev/validate_render_reward.py
+```
+
+which probes an animated scene (renders, visual ~0.37), a black scene
+(renders, visual ~0.06), a runtime-broken scene (render gate 0), and the
+infra-mask path.
+
+### vf-eval on Windows + Kimi K3
+
+- Pass `--disable-env-server`: verifiers 0.2.x's ZMQ env server binds a POSIX
+  `ipc:///tmp/...` address that does not exist on native Windows.
+- Without an endpoint registry, vf-eval falls back to Prime's inference
+  endpoint. For Moonshot pass `-b https://api.moonshot.ai/v1 -k OPENAI_API_KEY`
+  with `OPENAI_API_KEY` set from `MOONSHOT_API_KEY`.
+- K3 thinks before it writes and the thinking shares the completion budget:
+  `--max-tokens 2048` and even `8192` truncate every rollout (`is_truncated`
+  1.0, reward 0). Use a much larger budget (or the training stack's reasoning
+  controls) when scoring real completions.
+
 ## Local Use
 
 ```bash

@@ -48,8 +48,20 @@ def load_environment(
     summarize_at_tokens: int | tuple[int, int] | list[int] | None = None,
     local_checkout: str | Path | None = None,
     sandbox: bool | dict[str, object] = True,
+    reward_mode: str = "static",
+    render_backend: str = "local_subprocess",
+    render_quality: str = "ql",
+    render_timeout_s: int = 120,
 ) -> vf.Environment:
-    """Load the Math-To-Manim visual repair environment."""
+    """Load the Math-To-Manim visual repair environment.
+
+    reward_mode="static" uses the original 7-component static rubric.
+    reward_mode="render" (reward v2) collapses the static rubric to 0.25 and
+    adds a sandbox/subprocess render gate (0.45) plus frame-level visual
+    heuristics (0.30). Infra failures are reported in the ledger as
+    masked=True and score 0 on the render components rather than poisoning
+    the static reward signal.
+    """
 
     entries = _load_jsonl(Path(dataset_path).expanduser() if dataset_path else DEFAULT_DATASET)
     if mode in {"rlm", "repl"}:
@@ -109,7 +121,16 @@ def load_environment(
         if eval_examples > 0:
             eval_dataset = eval_dataset.select(range(min(eval_examples, len(eval_dataset))))
 
-    rubric = M2M2RepairRubric()
+    if reward_mode == "render":
+        rubric: Rubric = M2M2RenderRubric(
+            backend=render_backend,
+            quality=render_quality,
+            timeout_s=render_timeout_s,
+        )
+    elif reward_mode == "static":
+        rubric = M2M2RepairRubric()
+    else:
+        raise ValueError("reward_mode must be 'static' or 'render'")
     env = M2M2RepairEnv(
         dataset=train_dataset,
         eval_dataset=eval_dataset,
@@ -195,6 +216,125 @@ class M2M2RepairRubric(Rubric):
         return float(result.components.get(key, 0.0))
 
 
+class M2M2RenderRubric(M2M2RepairRubric):
+    """Reward v2: static bundle (0.25) + render gate (0.45) + visual heuristics (0.30).
+
+    Render and visual components are computed once per completion and cached
+    on the instance (rollouts are single-process per scoring call). Infra
+    failures score 0 on both render components and are flagged masked=True
+    in the ledger so the training side can drop the completion instead of
+    learning from infrastructure noise.
+    """
+
+    STATIC_SCALE = 0.25
+    RENDER_WEIGHT = 0.45
+    VISUAL_WEIGHT = 0.30
+
+    def __init__(
+        self,
+        parser: Parser | None = None,
+        backend: str = "local_subprocess",
+        quality: str = "ql",
+        timeout_s: int = 120,
+    ):
+        super().__init__(parser=parser)
+        self.backend = backend
+        self.quality = quality
+        self.timeout_s = timeout_s
+        self._render_cache: dict[str, tuple[Any, float, Any]] = {}
+        self._last_render: tuple[Any, float, Any] | None = None
+        static_weights = [weight * self.STATIC_SCALE for weight in [0.08, 0.12, 0.12, 0.22, 0.13, 0.15, 0.18]]
+        self.funcs = [
+            self.format_reward,
+            self.schema_reward,
+            self.python_parse_reward,
+            self.static_validation_reward,
+            self.safety_reward,
+            self.acceptance_terms_reward,
+            self.layout_static_reward,
+            self.render_reward,
+            self.visual_reward,
+        ]
+        self.weights = static_weights + [self.RENDER_WEIGHT, self.VISUAL_WEIGHT]
+
+    def render_reward(self, completion: Messages, answer: str, parser: Parser, **_: Any) -> float:
+        result, _, _ = self._render_and_visual(completion, answer, parser)
+        return 1.0 if result.rendered else 0.0
+
+    def visual_reward(self, completion: Messages, answer: str, parser: Parser, **_: Any) -> float:
+        _, visual_score, _ = self._render_and_visual(completion, answer, parser)
+        return float(visual_score)
+
+    def score(self, completion: Messages, answer: str, info: Optional[dict[str, Any]] = None, **_: Any) -> float:
+        static_score = super().score(completion, answer, info, **_)
+        render_reward = self.render_reward(completion, answer, self.parser)
+        visual_reward = self.visual_reward(completion, answer, self.parser)
+        return float(
+            self.STATIC_SCALE * static_score
+            + self.RENDER_WEIGHT * render_reward
+            + self.VISUAL_WEIGHT * visual_reward
+        )
+
+    def get_last_ledger(self) -> dict[str, Any] | None:
+        ledger = super().get_last_ledger()
+        if ledger is None:
+            return None
+        ledger["reward_scalar"] = ledger["reward_scalar"] * self.STATIC_SCALE
+        if self._last_render is not None:
+            result, visual_score, metrics = self._last_render
+            ledger["render"] = {
+                "status": result.status,
+                "backend": result.backend,
+                "mp4_bytes": result.mp4_bytes,
+                "wall_s": round(result.wall_s, 2),
+                "masked": result.infra_error,
+                "stderr_tail": result.stderr_tail[-300:],
+            }
+            ledger["render_reward"] = 1.0 if result.rendered else 0.0
+            ledger["visual_reward"] = visual_score
+            ledger["visual_metrics"] = getattr(metrics, "__dict__", {})
+            ledger["reward_scalar"] += self.RENDER_WEIGHT * ledger["render_reward"] + self.VISUAL_WEIGHT * visual_score
+        return ledger
+
+    def _render_and_visual(self, completion: Messages, answer: str, parser: Parser) -> tuple[Any, float, Any]:
+        import hashlib
+
+        prediction = parser.parse_answer(completion) or ""
+        key = hashlib.sha1((answer + "\x00" + prediction).encode("utf-8")).hexdigest()
+        if key in self._render_cache:
+            cached = self._render_cache[key]
+            self._last_render = cached
+            return cached
+
+        from .render_reward import RenderResult, render_scene
+        from .scoring import extract_generated_code_payload
+        from .visual_reward import VisualMetrics, visual_quality
+
+        result: Any = RenderResult(status="failed", scene_name="", stderr_tail="no code payload")
+        visual_score = 0.0
+        metrics: Any = VisualMetrics()
+        payload, _used_tags = extract_generated_code_payload(prediction)
+        if payload:
+            try:
+                generated = json.loads(payload)
+            except json.JSONDecodeError:
+                generated = None
+            if isinstance(generated, dict) and generated.get("code") and generated.get("scene_name"):
+                result = render_scene(
+                    str(generated["scene_name"]),
+                    str(generated["code"]),
+                    quality=self.quality,
+                    timeout_s=self.timeout_s,
+                    backend=self.backend,
+                )
+                if result.rendered and result.mp4_path:
+                    visual_score, metrics = visual_quality(result.mp4_path)
+        bundle = (result, visual_score, metrics)
+        self._render_cache[key] = bundle
+        self._last_render = bundle
+        return bundle
+
+
 class M2M2RepairEnv(SingleTurnEnv):
     """Single-turn repair environment."""
 
@@ -237,9 +377,11 @@ def _prepare_records(entries: list[dict[str, Any]], task_filter: Optional[Sequen
                 "id": task_id,
                 "question": prompt,
                 "answer": json.dumps(task, sort_keys=True),
-                "task": task_type,
+                # verifiers>=0.2: no top-level "task" string — flatten_task_input
+                # would try to json-decode it and replace the whole rollout input.
                 "info": {
                     "task_id": task_id,
+                    "task_type": task_type,
                     "scene_name": task.get("scene_name"),
                     "acceptance_terms": task.get("acceptance_terms") or [],
                 },

@@ -337,13 +337,14 @@ def build_rlm_records(entries: list[dict[str, Any]], task_filter: Optional[Seque
             {
                 "id": task_id,
                 "task_id": task_id,
-                "task": RLM_TASK_TYPE,
-                "task_type": RLM_TASK_TYPE,
+                # verifiers>=0.2: top-level "task" strings are no longer valid
+                # rollout inputs; keep the type inside info instead.
                 "question": RLM_QUESTION,
                 "instruction": RLM_INSTRUCTION,
                 "answer": json.dumps(scoring_task, sort_keys=True),
                 "info": {
                     "task_id": task_id,
+                    "task_type": RLM_TASK_TYPE,
                     "scene_name": task_payload.get("scene_name"),
                     "acceptance_terms": task_payload.get("acceptance_terms") or [],
                     "context": context,
