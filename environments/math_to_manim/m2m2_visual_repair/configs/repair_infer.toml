@@ -1,0 +1,3 @@
+# NOTE (2026-07-17): aligned to repair_train.toml (was Qwen/Qwen3.5-35B-A3B).
+[model]
+name = "Qwen/Qwen3-30B-A3B-Instruct-2507"

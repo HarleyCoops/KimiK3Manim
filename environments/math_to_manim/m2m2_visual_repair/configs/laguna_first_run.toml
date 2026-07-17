@@ -1,0 +1,22 @@
+name = "m2m2-prime-laguna-first-real-run-v0-1-13"
+model = "poolside/Laguna-XS.2"
+max_steps = 25
+batch_size = 128
+rollouts_per_example = 8
+learning_rate = 1e-6
+
+[sampling]
+max_tokens = 512
+enable_thinking = false
+
+[[env]]
+id = "harleycooper/math-to-manim"
+args = { mode = "rlm", eval_fraction = 0 }
+
+[checkpoints]
+interval = 10
+keep_cloud = 3
+
+[adapters]
+interval = 10
+keep_last = 3
