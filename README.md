@@ -10,6 +10,49 @@ self-critiqued by the six-agent K3 swarm from a single verbose LaTeX-rich
 prompt. Click the collage for the full mp4
 ([EulerIdentityFilm.mp4](assets/EulerIdentityFilm.mp4)).*
 
+## Reverse Reasoning — a K3 protocol film (new)
+
+[![Reverse Reasoning — a Kimi K3 protocol film](assets/k3_reverse_reasoning.gif)](assets/K3ReverseReasoning.mp4)
+
+*A ~1 minute, 1080p30, LaTeX-rich 3D short, designed and directed by Kimi K3
+itself in a single session. Click the GIF for the full mp4
+([K3ReverseReasoning.mp4](assets/K3ReverseReasoning.mp4)); scene source:
+[manim_scenes/k3_reverse_reasoning.py](manim_scenes/k3_reverse_reasoning.py).*
+
+What you are seeing on screen, act by act:
+
+1. **Genesis — 896 sleep, 16 wake.** A Fibonacci-sphere lattice of dormant
+   experts drifts in a void; sixteen ignite in magenta and cyan. This is
+   Stable LatentMoE: `y = Σ_{i∈T} g_i(x)E_i(x)` with `|T| = 16` active of
+   `N_E = 896` experts.
+2. **The Goal.** A golden monolith crystallizes over a wireframe manifold of
+   conjectures: Nicomachus' theorem `Σ k³ = (n(n+1)/2)²` — the statement the
+   protocol will prove. The protocol begins at the end.
+3. **Backward Bloom.** Reverse reasoning made visible: the goal `G`
+   decomposes into sufficient subgoals (`G ⇐ g₁ ∧ τ ∧ β`), each of which
+   blooms further (`g₁ ⇐ ℓ ∧ g₂ ∧ g₃`, `g₂ ⇐ α₁`, `g₃ ⇐ α₂`) until every
+   leaf is an axiom glowing green. Every node is real LaTeX and the proof is
+   valid — telescoping differences, the factorization lemma, and the base
+   case `1³ = 1²`.
+4. **Forward Verification.** Direction flip: pulses of light climb the tree
+   from the axioms to the goal, igniting every link as it is checked, while
+   the K3 machinery that does the checking floats on screen — Kimi Delta
+   Attention (`S_t = S_{t-1}Γ_t + β_t k_t(v_t - S_{t-1}k_t)ᵀ`) and Attention
+   Residuals (`h_ℓ = Σ_{i<ℓ} w_i h_i`). The goal blazes and emits shockwave
+   rings.
+5. **Sigil.** The proof collapses into a burning star; a halo of the film's
+   LaTeX artifacts orbits it like a debris ring before the end card:
+   **reason backward · verify forward**.
+
+Render it yourself (five acts, concatenated with ffmpeg):
+
+```bash
+for s in RRGenesis RRGoal RRBackwardBloom RRVerification RRSigil; do
+  uv run python -m manim render -r 1920,1080 --fps 30 \
+    manim_scenes/k3_reverse_reasoning.py "$s"
+done
+```
+
 ## The K3 Agent Swarm (new)
 
 The pipeline was rebuilt on launch day of `kimi-k3` (July 16, 2026) as six
