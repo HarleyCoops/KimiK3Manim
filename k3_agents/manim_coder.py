@@ -1,19 +1,15 @@
 """Stage 5: Manim Coder - turns the screenplay into runnable scenes.
 
-Runs on kimi-k3, the same model family as the rest of the swarm.
+Runs on kimi-k3, the same model as the rest of the swarm.
 The supervisor executes the emitted files and feeds tracebacks back here
 for repair, so this agent also handles fix-up rounds.
 """
 
 from __future__ import annotations
 
-from typing import Optional
-
 try:
-    from ..config import KIMI_MODEL_CODE
     from ..schemas import Narrative, SceneBundle, VisualSpec
 except ImportError:
-    from config import KIMI_MODEL_CODE
     from schemas import Narrative, SceneBundle, VisualSpec
 
 from .base import K3Agent
@@ -22,9 +18,6 @@ from .base import K3Agent
 class ManimCoder(K3Agent):
     name = "manim-coder"
     output_model = SceneBundle
-
-    def __init__(self, client=None, model: Optional[str] = None):
-        super().__init__(client=client, model=model or KIMI_MODEL_CODE)
 
     def system_prompt(self) -> str:
         return (

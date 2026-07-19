@@ -1,7 +1,8 @@
 """Resume the K3 pipeline at Stage 5 from saved artifacts 01-04.
 
 Stages 1-4 completed and were persisted to the run directory; the original
-run died because the default code model (kimi-k2.7-code) was discontinued.
+run died at Stage 5 because the coder passed a model override the runtime
+could not resolve (the swarm is kimi-k3 only now, no override needed).
 This script reuses Supervisor's render/critic machinery without re-paying
 for stages 1-4.
 """

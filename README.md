@@ -3,12 +3,14 @@
 Math and physics animations imagined end-to-end by a swarm of **Kimi K3**
 agents and rendered with [Manim Community Edition](https://www.manim.community/).
 
-Give the pipeline a concept - "gauge invariance in electromagnetism",
-"the heat kernel", "why planets orbit in ellipses" - and six specialist
-agents map its prerequisite structure, enrich it with rigorous mathematics,
-design the visual language, write a screenplay, generate runnable Manim
-code, and then *watch their own rendered frames* and iterate until the
-result is worth shipping.
+Give the pipeline a concept - anything from "why the Pythagorean theorem
+is true" to "the unit circle" to "gauge invariance in electromagnetism" -
+and six specialist agents map its prerequisite structure, enrich it with
+rigorous mathematics, design the visual language, write a screenplay,
+generate runnable Manim code, and then *watch their own rendered frames*
+and iterate until the result is worth shipping. It works at every level:
+elementary and college concepts often make the most striking 3D films,
+because it is the first time anyone has seen them move.
 
 [![Euler's Identity — rendered by the K3 agent swarm](assets/euler_identity_hero.png)](assets/EulerIdentityFilm.mp4)
 
@@ -205,18 +207,103 @@ Render failures send the traceback back to the Coder; critic failures send
 concrete visual issues back to the Coder. The loop runs until the critic
 passes or the repair budget (default 3 rounds) is exhausted.
 
-### Run it
+---
+
+## Usage
+
+One command, concept in, film out:
 
 ```bash
-uv run python -m k3_agents.supervisor "the wave equation"
-
-# options
-uv run python -m k3_agents.supervisor "special relativity" --quality -qh --max-repairs 5
+uv run python -m k3_agents.supervisor "the unit circle and why sine and cosine are shadows"
 ```
 
-The run directory will contain every intermediate artifact
-(`01_knowledge_graph.json` through `06_critique_*.json`), the generated
-scene files, and the final mp4 under `media/`.
+### Any level of mathematics
+
+The pipeline is not only for research-grade topology. It is just as happy -
+and renders just as beautifully - at the elementary and college level, where
+seeing a familiar idea in 3D for the first time is often the bigger "aha":
+
+```bash
+# middle / high school
+uv run python -m k3_agents.supervisor "why the Pythagorean theorem is true: squares on triangle sides"
+uv run python -m k3_agents.supervisor "what slope really measures, from stairs to tangent lines"
+uv run python -m k3_agents.supervisor "the unit circle: sine and cosine as shadows of a spinning point"
+
+# early college
+uv run python -m k3_agents.supervisor "the derivative as a zoom: local linearity"
+uv run python -m k3_agents.supervisor "why the integral is area: Riemann sums coming alive"
+uv run python -m k3_agents.supervisor "conic sections: slicing one cone into circle, ellipse, parabola, hyperbola"
+uv run python -m k3_agents.supervisor "eigenvectors: the directions a matrix cannot turn"
+
+# upper level / graduate
+uv run python -m k3_agents.supervisor "the heat equation and why coffee cools evenly"
+uv run python -m k3_agents.supervisor "why must an electron turn around twice to come home: SO(3), quaternions, the belt trick"
+```
+
+The Concept Scout automatically calibrates the prerequisite graph to the
+concept - "what slope measures" produces a shallow, friendly graph, while
+the electron question grows a deep quaternion chain. You do not need to
+tell it the audience level, but you can steer it by phrasing the concept
+the way you would ask the question.
+
+### Options
+
+```bash
+uv run python -m k3_agents.supervisor "conic sections" --quality qh --max-repairs 5
+```
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--quality {ql,qm,qh,qk}` | `qm` | Render quality: 480p / 720p / 1080p / 4K |
+| `--max-repairs N` | `3` | Coder/critic repair rounds before shipping best effort |
+
+### What a run produces
+
+Every run writes a self-contained directory under `output/k3_runs/<slug>/`:
+
+```
+01_knowledge_graph.json     Concept Scout: prerequisite graph
+02_math_enrichment.json     Enricher: LaTeX, symbol tables, worked examples
+03_visual_spec.json         Designer: palette, shot plan, camera notes
+04_narrative.json           Composer: scene-by-scene screenplay
+05_scene_bundle.json        Coder: generated Manim source (+ _fixN repair rounds)
+06_critique_round*.json     Critic: pass/fail, score, concrete issues
+scenes/                     The generated .py scene files, ready to re-render
+frames/                     Frames sampled for the critic
+media/videos/.../*.mp4      The rendered film
+```
+
+Because the artifacts are plain JSON and the scenes are plain Manim, you
+can stop at any stage: take the screenplay to a human animator, hand-edit
+a generated scene and re-render it yourself, or re-run just the critic.
+
+### Rendering scenes directly
+
+Any scene in the repo (curated or generated) renders without model calls:
+
+```bash
+uv run manim -qh manim_scenes/k3_harmonic_universe.py K3HarmonicUniverse
+uv run manim -qh output/k3_runs/<slug>/scenes/<file>.py <SceneClass>
+```
+
+### Troubleshooting
+
+- **`warning: Failed to hardlink files; falling back to full copy`** (uv):
+  harmless. uv normally hardlinks packages from its cache into `.venv` to
+  save time and disk; hardlinks cannot cross filesystems, so when the
+  project and the cache live on different ones (typical on WSL when the
+  repo is under `/mnt/c/...` but the cache is in the Linux home) uv copies
+  instead. Everything works - it is just slower. To make it fast, keep the
+  clone inside the Linux filesystem (e.g. `~/KimiK3Manim`); to silence the
+  warning, `export UV_LINK_MODE=copy`.
+- **`latex: command not found` / MathTex errors**: install a LaTeX
+  distribution and dvisvgm (`sudo apt install texlive texlive-latex-extra dvisvgm`).
+- **Blank or missing video**: check `media/` under the run directory; a
+  render failure will have been sent to the Coder automatically - see the
+  `05_scene_bundle_fixN.json` artifacts for what it changed.
+- **Subscription auth errors**: run `uv run kimi login` once (or `kimi`
+  then `/login` if you installed the standalone CLI) and retry; set
+  `KIMI_AUTH_MODE=api-key` with `MOONSHOT_API_KEY` as the fallback.
 
 ---
 
@@ -246,15 +333,20 @@ uv pip install manim          # or: uv sync --extra render
 through the Kimi Code CLI - no API key handling, no per-token billing
 surprises, and the same login powers the Kimi Agent SDK runtime.**
 
-```bash
-# Install the Kimi Code CLI (single binary, no Node required)
-curl -fsSL https://code.kimi.com/kimi-code/install.sh | bash
-# or: brew install kimi-code
+The Kimi CLI ships inside this project's venv (a dependency of the Agent
+SDK), so after `uv sync` the one-time login is just:
 
-# Launch it once and log in
-kimi
-# then inside the TUI:
-#   /login  ->  choose "Kimi Code OAuth" and authorize in the browser
+```bash
+uv run kimi login
+# a browser opens -> authorize with Kimi Code OAuth
+```
+
+Alternatively, install the standalone Kimi Code CLI and log in through its
+TUI (same stored credentials, plus you get the full coding agent):
+
+```bash
+curl -fsSL https://code.kimi.com/kimi-code/install.sh | bash   # or: brew install kimi-code
+kimi          # then inside the TUI:  /login -> "Kimi Code OAuth"
 ```
 
 That is the entire setup. The OAuth login is stored by the CLI and reused
@@ -289,6 +381,9 @@ uv run manim -qh manim_scenes/k3_harmonic_universe.py K3HarmonicUniverse
 uv run python -m k3_agents.supervisor "fourier series"
 ```
 
+See [Usage](#usage) above for concept ideas at every level, all options,
+and what a run produces.
+
 ---
 
 ## Configuration reference
@@ -301,7 +396,6 @@ environment variables or `.env`:
 | `KIMI_AUTH_MODE` | `subscription` | `subscription` = Kimi Code CLI OAuth via the Agent SDK; `api-key` = raw platform API with `MOONSHOT_API_KEY` |
 | `MOONSHOT_API_KEY` | unset | Platform API key; required only in `api-key` mode |
 | `KIMI_MODEL` | `kimi-k3` | Reasoning model for Scout/Enricher/Designer/Composer/Critic |
-| `KIMI_MODEL_CODE` | `kimi-k3` | Model for the Manim Coder |
 | `KIMI_REASONING_EFFORT` | `max` | K3 reasoning effort (`max` is the only accepted value at launch) |
 | `KIMI_MAX_TOKENS` | `8192` | Default completion budget per call |
 | `KIMI_USE_TOOLS` | `true` | Tool calling for legacy K2-era code paths |
