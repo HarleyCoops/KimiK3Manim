@@ -10,6 +10,56 @@ self-critiqued by the six-agent K3 swarm from a single verbose LaTeX-rich
 prompt. Click the collage for the full mp4
 ([EulerIdentityFilm.mp4](assets/EulerIdentityFilm.mp4)).*
 
+## Melting Space — Ricci Flow and the Poincaré Conjecture (new)
+
+[![Melting Space — Ricci flow melts a dumbbell into spheres](assets/melting_space.gif)](assets/MeltingSpace.mp4)
+
+*A ~2 minute, 1080p30, LaTeX-rich 3D film, imagined, scripted, and rendered by
+Kimi K3 in a single session — from a verbose per-scene prompt it wrote for
+itself ([prompts/RicciFlowFilm.tex](prompts/RicciFlowFilm.tex)); scene source:
+[manim_scenes/melting_space.py](manim_scenes/melting_space.py). Click the GIF
+for the full mp4 ([MeltingSpace.mp4](assets/MeltingSpace.mp4)).*
+
+What you are seeing on screen, scene by scene:
+
+1. **Shapes & the rubber-band test.** A golden wireframe sphere morphs through
+   pear, dumbbell, and blob — to a topologist these are all the same shape. A
+   cyan loop lassoed around each one slides free; around a ghost donut, a
+   magenta loop is stuck forever. This is the entire content of Poincaré's
+   1904 question: `∀γ : S¹ → M, γ ≃ point  ⟹  M ≅ S³ ?`
+2. **The curvature fingerprint.** Osculating rings snug against the surface
+   show principal curvatures `k_i = 1/r_i`; ~760 dots paint the shape by
+   Gaussian curvature `K = k₁k₂` — fire where it's tightly curved, ice where
+   it's flat. Gauss' Theorema Egregium: `K` is intrinsic, measurable without
+   ever leaving the surface.
+3. **Heat & the melt.** The heat equation `∂ₜu = Δu` smooths a plate of
+   temperature dots until every point equals its neighbors — then Hamilton's
+   masterstroke, `∂g/∂t = −2 Ric(g)`: do the same thing to *shape itself*. The
+   curvature-painted dumbbell melts toward a uniform gold sphere. Cliffhanger:
+   a surface of revolution whose waist keeps thinning.
+4. **The neck pinch.** The waist collapses as the `|Rm|_neck` gauge climbs —
+   curvature blows up in finite time: `|Rm| → ∞, t → T < ∞`. The flow
+   singularizes; the lobes snap apart; a beat of black silence.
+5. **Perelman's surgery.** Cut a neck `S² × (−ε, ε)`, cap both stumps with
+   `D³`, keep flowing: `M ≅ M₁ # M₂`. A flash of the W-entropy monotonicity
+   formula `W(g, f, τ) ↑` — Perelman's proof that no new singularities sneak
+   in — and the two halves melt into twin spheres, then a cascade of spheres.
+6. **The theorem.** Every simply connected closed 3-manifold is a sphere:
+   Poincaré (1904, the question) → Hamilton (1982, the flow) → Perelman
+   (2002–03, the surgery). Fields Medal and Millennium Prize — both declined.
+   The cyan rubber band returns, slides off the hero sphere one last time:
+   **"If every loop can let go, the shape was always a sphere."**
+
+Render it yourself (six scenes, concatenated with ffmpeg):
+
+```bash
+for s in MS1Shapes MS2Curvature MS3HeatFlow MS4NeckPinch MS5Surgery MS6Theorem; do
+  uv run python -m manim render -r 1920,1080 --fps 30 \
+    manim_scenes/melting_space.py "$s"
+done
+ffmpeg -f concat -safe 0 -i concat.txt -c copy MeltingSpace.mp4
+```
+
 ## Reverse Reasoning — a K3 protocol film (new)
 
 [![Reverse Reasoning — a Kimi K3 protocol film](assets/k3_reverse_reasoning.gif)](assets/K3ReverseReasoning.mp4)
