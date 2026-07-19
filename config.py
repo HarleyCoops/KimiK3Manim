@@ -5,7 +5,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# API Configuration
+# Authentication
+# "subscription" (default): Kimi Code CLI OAuth login, reused automatically
+#   by the Kimi Agent SDK runtime - no API key needed. Run `kimi` once and
+#   /login with Kimi Code OAuth.
+# "api-key": raw platform API at api.moonshot.ai with MOONSHOT_API_KEY.
+KIMI_AUTH_MODE = os.getenv("KIMI_AUTH_MODE", "subscription")
+
+# API Configuration (api-key mode; also used as fallback when set)
 MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY")
 # Note: The correct endpoint is api.moonshot.ai (not .cn). The docs/console
 # site rebranded to platform.kimi.ai in 2026; the API host is unchanged.
