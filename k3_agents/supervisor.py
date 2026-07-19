@@ -194,11 +194,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the K3 animation pipeline")
     parser.add_argument("concept", help="Math/physics concept to animate")
     parser.add_argument("--max-repairs", type=int, default=3)
-    parser.add_argument("--quality", default="-qm", help="Manim quality flag")
+    parser.add_argument(
+        "--quality",
+        default="qm",
+        choices=["ql", "qm", "qh", "qk"],
+        help="Manim render quality: ql (480p), qm (720p), qh (1080p), qk (4K)",
+    )
     args = parser.parse_args()
 
     result = Supervisor(
-        max_repair_rounds=args.max_repairs, render_quality=args.quality
+        max_repair_rounds=args.max_repairs, render_quality=f"-{args.quality}"
     ).run(args.concept)
     print(f"\nRun dir: {result.run_dir}")
     print(f"Video:   {result.video_path}")
