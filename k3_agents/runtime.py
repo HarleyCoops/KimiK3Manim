@@ -55,9 +55,20 @@ def _extract_json(text: str) -> str:
 
 
 async def _prompt_once(full_prompt: str, model: Optional[str]) -> str:
-    from kimi_agent_sdk import prompt  # imported lazily
+    import tempfile
 
-    kwargs: dict = {"yolo": True}
+    from kimi_agent_sdk import prompt  # imported lazily
+    from kaos.path import KaosPath
+
+    # Isolate the agent from the repository: the SDK's work_dir defaults to
+    # cwd, and under yolo the agent will happily read repo files for
+    # "context" - which biases every artifact toward whatever aesthetics
+    # already live in this repo (the star-map attractor). An empty temp dir
+    # keeps each turn grounded in its prompt alone.
+    kwargs: dict = {
+        "yolo": True,
+        "work_dir": KaosPath(tempfile.mkdtemp(prefix="k3_agent_")),
+    }
     if model:
         kwargs["model"] = model
     chunks: list[str] = []

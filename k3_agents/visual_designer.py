@@ -29,7 +29,11 @@ class VisualDesigner(K3Agent):
             "language) and a per-node shot plan: what draws, transforms, and "
             "morphs on screen, camera movement, and duration. Favor continuous "
             "visual metaphors that evolve across segments over disconnected "
-            "illustrations. If reference frames are attached, match their style."
+            "illustrations. Derive the central visual metaphor from the "
+            "mathematics of the concept itself; do NOT default to generic "
+            "star fields, constellations, or cosmic imagery unless the "
+            "concept is literally astronomical. "
+            "If reference frames are attached, match their style."
         )
 
     def design(
