@@ -25,8 +25,7 @@
 All configuration is in `KimiK2Thinking/config.py` or via environment variables:
 
 - `MOONSHOT_API_KEY`: Your Moonshot AI API key (required)
-- `KIMI_MODEL`: Kimi model name (default: `"kimi-k3"`)
-- `KIMI_MODEL_CODE`: Code-gen model for Manim Coder (default: `"kimi-k3"`)
+- `KIMI_MODEL`: Kimi model name (default: `"kimi-k3"`); every agent runs on kimi-k3
 - `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `"max"`)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: "true")
 - `KIMI_ENABLE_THINKING`: Legacy K2 thinking toggle; ignored by kimi-k3
@@ -70,7 +69,6 @@ Use current Kimi models (the kimi-k2 series was discontinued 2026-05-25):
 Update in `.env`:
 ```
 KIMI_MODEL=kimi-k3
-KIMI_MODEL_CODE=kimi-k3
 KIMI_REASONING_EFFORT=max
 ```
 

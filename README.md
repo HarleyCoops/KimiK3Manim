@@ -396,7 +396,6 @@ environment variables or `.env`:
 | `KIMI_AUTH_MODE` | `subscription` | `subscription` = Kimi Code CLI OAuth via the Agent SDK; `api-key` = raw platform API with `MOONSHOT_API_KEY` |
 | `MOONSHOT_API_KEY` | unset | Platform API key; required only in `api-key` mode |
 | `KIMI_MODEL` | `kimi-k3` | Reasoning model for Scout/Enricher/Designer/Composer/Critic |
-| `KIMI_MODEL_CODE` | `kimi-k3` | Model for the Manim Coder |
 | `KIMI_REASONING_EFFORT` | `max` | K3 reasoning effort (`max` is the only accepted value at launch) |
 | `KIMI_MAX_TOKENS` | `8192` | Default completion budget per call |
 | `KIMI_USE_TOOLS` | `true` | Tool calling for legacy K2-era code paths |

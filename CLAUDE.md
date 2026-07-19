@@ -201,8 +201,8 @@ All configuration in [config.py](config.py) and `.env`:
 
 **Optional**:
 
-- `KIMI_MODEL`: Model name (default: `kimi-k3`)
-- `KIMI_MODEL_CODE`: Code-gen model for the Manim Coder (default: `kimi-k3`)
+- `KIMI_MODEL`: Model name (default: `kimi-k3`); every agent in the swarm
+  runs on kimi-k3
 - `KIMI_REASONING_EFFORT`: K3 reasoning effort (default: `max`; the only
   accepted value at K3 launch)
 - `KIMI_USE_TOOLS`: Enable tool calling (default: `true`)

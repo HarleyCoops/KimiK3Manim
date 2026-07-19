@@ -24,9 +24,6 @@ MOONSHOT_BASE_URL = "https://api.moonshot.ai/v1"
 # The kimi-k2 series (including kimi-k2-0905-preview) was discontinued
 # 2026-05-25 and no longer resolves.
 KIMI_MODEL = os.getenv("KIMI_MODEL", "kimi-k3")
-# Model for the Manim Coder (scene generation) stage; same model as the
-# rest of the swarm.
-KIMI_MODEL_CODE = os.getenv("KIMI_MODEL_CODE", "kimi-k3")
 # Backward-compatible alias; prefer KIMI_MODEL in new code.
 KIMI_K2_MODEL = KIMI_MODEL
 
