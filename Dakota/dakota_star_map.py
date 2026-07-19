@@ -112,8 +112,8 @@ class DakotaStarMap(Scene):
             Create(e) for e in edges
         ], lag_ratio=0.02), run_time=2.4)
 
-        caption = Text("18 rules, one language: every star constrains its neighbors",
-                       font_size=22, color=MIST).to_edge(DOWN, buff=0.4)
+        caption = Text("18 of 1,497 rules extracted from one 1890 book: every star constrains its neighbors",
+                       font_size=21, color=MIST).to_edge(DOWN, buff=0.4)
         self.play(FadeIn(caption))
         self.wait(1.6)
         self.play(FadeOut(caption), FadeOut(edges), FadeOut(labels), run_time=0.8)
@@ -226,17 +226,21 @@ class DakotaStarMap(Scene):
         bright = stars.copy().set_opacity(1.0)
         self.play(Transform(stars, bright), run_time=0.9)
 
+        head = Text("the reward IS the grammar", font_size=24,
+                    color=GOLD).to_edge(UP, buff=0.4)
         obj = MathTex(
-            r"J(\theta)=\mathbb{E}_{x\sim\mathcal{D}_{1890}}"
-            r"\Big[\sum_{r}w_r\,\log p_\theta(r\ \text{satisfied}\mid x)\Big]",
+            r"r = \big(0.4\,r_{\text{orthography}}"
+            r" + 0.4\,r_{\text{affix}}"
+            r" + 0.2\,r_{\text{semantics}}\big)\times d",
             font_size=30,
-        ).to_edge(UP, buff=0.45)
-        step = MathTex(
-            r"\theta_{t+1}=\theta_t+\eta\,\nabla_\theta J(\theta_t)",
-            font_size=28, color=GOLD,
-        ).next_to(obj, DOWN, buff=0.25)
+        ).next_to(head, DOWN, buff=0.25)
+        step = Text(
+            "deterministic - no LLM judge; 10,576 verifiable tasks; GRPO",
+            font_size=19, color=MIST,
+        ).next_to(obj, DOWN, buff=0.2)
+        self.play(FadeIn(head, shift=DOWN * 0.2))
         self.play(Write(obj), run_time=2.0)
-        self.play(Write(step), run_time=1.4)
+        self.play(FadeIn(step), run_time=1.0)
 
         # the model particle and its learning trajectory
         path = VMobject()
@@ -282,7 +286,7 @@ class DakotaStarMap(Scene):
                    font_size=21, color=MIST).to_edge(DOWN, buff=0.4)
         self.play(FadeIn(cap))
         self.wait(1.6)
-        self.play(FadeOut(VGroup(obj, step, particle, pulls, trail, cap)),
+        self.play(FadeOut(VGroup(head, obj, step, particle, pulls, trail, cap)),
                   run_time=0.9)
 
     # ------------------------------------------------------------------
@@ -295,9 +299,11 @@ class DakotaStarMap(Scene):
         self.play(Transform(stars, dim), run_time=1.4)
 
         end1 = Text("Dakhóta iápi - the Dakota language", font_size=28, color=WHITE)
-        end2 = Text("Documented 1890. Still spoken. Still teaching.",
-                    font_size=22, color=MIST).next_to(end1, DOWN, buff=0.3)
-        card = VGroup(end1, end2).move_to(ORIGIN)
+        end2 = Text("One book, 1890. 1,497 rules. A model that read it cover to cover.",
+                    font_size=21, color=MIST).next_to(end1, DOWN, buff=0.3)
+        end3 = Text("The community teaches it the rest.",
+                    font_size=21, color=GOLD).next_to(end2, DOWN, buff=0.2)
+        card = VGroup(end1, end2, end3).move_to(ORIGIN)
         self.play(FadeIn(card, shift=UP * 0.2), run_time=1.2)
         self.wait(3.0)
         self.play(FadeOut(card), FadeOut(stars), run_time=1.4)
