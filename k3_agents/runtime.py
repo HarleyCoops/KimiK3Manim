@@ -54,10 +54,17 @@ def _extract_json(text: str) -> str:
     return text
 
 
+def _reject_all(request) -> None:
+    """Pipeline agents are pure text generators - deny any tool use."""
+    request.resolve("reject")
+
+
 async def _prompt_once(full_prompt: str, model: Optional[str]) -> str:
     from kimi_agent_sdk import prompt  # imported lazily
 
-    kwargs = {"yolo": False}
+    kwargs: dict = {"approval_handler_fn": _reject_all}
+    if model:
+        kwargs["model"] = model
     chunks: list[str] = []
     async for msg in prompt(full_prompt, **kwargs):
         part = msg.extract_text()
