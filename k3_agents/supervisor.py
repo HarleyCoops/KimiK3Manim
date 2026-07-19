@@ -78,10 +78,47 @@ class Supervisor:
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(f.content, encoding="utf-8")
 
-    def _render(self, run_dir: Path, bundle: SceneBundle) -> tuple[bool, str, Optional[Path]]:
+    # Failures caused by the environment, not the generated code. Sending
+    # these to the coder wastes repair rounds on something it cannot fix.
+    _ENV_FAILURES = (
+        "No module named manim",
+        "No module named 'manim'",
+        "latex error converting to dvi",
+        "latex: not found",
+        "FileNotFoundError: [Errno 2] No such file or directory: 'latex'",
+        "libpango",
+    )
+
+    def preflight(self) -> None:
+        """Fail fast, with instructions, if the render environment is broken."""
+        import importlib.util
+        import shutil as _shutil
+
+        problems = []
+        if importlib.util.find_spec("manim") is None:
+            problems.append(
+                "manim is not installed in this environment. Run 'uv sync' "
+                "(manim is now a project dependency) or 'uv pip install manim'."
+            )
+        if _shutil.which("ffmpeg") is None:
+            problems.append("ffmpeg is not on PATH (sudo apt install ffmpeg).")
+        if _shutil.which("latex") is None:
+            problems.append(
+                "latex is not on PATH; MathTex will fail "
+                "(sudo apt install texlive texlive-latex-extra dvisvgm)."
+            )
+        if problems:
+            raise RuntimeError(
+                "Render environment is not ready:\n- " + "\n- ".join(problems)
+            )
+
+    def _render(
+        self, run_dir: Path, bundle: SceneBundle, attempt: int
+    ) -> tuple[bool, str, Optional[Path]]:
         """Render every scene file; returns (ok, combined_log, video_path)."""
         log_parts: List[str] = []
         video: Optional[Path] = None
+        ok = True
         for f in bundle.files:
             cmd = [
                 sys.executable, "-m", "manim", self.render_quality,
@@ -93,10 +130,27 @@ class Supervisor:
             )
             log_parts.append(proc.stdout + proc.stderr)
             if proc.returncode != 0:
-                return False, "\n".join(log_parts), None
+                ok = False
+                break
+        log = "\n".join(log_parts)
+        # Always persist the log so failed runs are diagnosable after the fact
+        (run_dir / f"render_attempt{attempt}.log").write_text(
+            log, encoding="utf-8"
+        )
+        if not ok:
+            for marker in self._ENV_FAILURES:
+                if marker in log:
+                    raise RuntimeError(
+                        f"Render failed due to the ENVIRONMENT, not the "
+                        f"generated code (matched: {marker!r}). Fix the "
+                        f"environment and re-run; see "
+                        f"{run_dir}/render_attempt{attempt}.log. Not sending "
+                        f"to the coder - it cannot repair this."
+                    )
+            return False, log, None
         mp4s = sorted((run_dir / "media").rglob("*.mp4"), key=lambda p: p.stat().st_mtime)
         video = mp4s[-1] if mp4s else None
-        return video is not None, "\n".join(log_parts), video
+        return video is not None, log, video
 
     def _sample_frames(self, run_dir: Path, video: Path, count: int = 6) -> List[Path]:
         frames_dir = run_dir / "frames"
@@ -122,6 +176,10 @@ class Supervisor:
         def say(msg: str) -> None:
             if verbose:
                 print(f"[supervisor] {msg}")
+
+        # Fail fast on a broken render environment BEFORE paying for any
+        # model calls - a missing manim/latex cannot be fixed by the coder.
+        self.preflight()
 
         say(f"Stage 1/6 Concept Scout: {concept}")
         graph: KnowledgeGraph = ConceptScout().explore(concept)
@@ -153,7 +211,7 @@ class Supervisor:
         while rounds <= self.max_repair_rounds:
             self._write_bundle(run_dir, bundle)
             say(f"Render attempt {rounds + 1}")
-            ok, log, video = self._render(run_dir, bundle)
+            ok, log, video = self._render(run_dir, bundle, rounds + 1)
             if not ok:
                 say("Render failed; sending traceback to coder")
                 rounds += 1

@@ -1310,6 +1310,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "kimi-agent-sdk" },
+    { name = "manim" },
     { name = "openai" },
     { name = "python-dotenv" },
 ]
@@ -1327,6 +1328,7 @@ render = [
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=26.3.1" },
     { name = "kimi-agent-sdk", specifier = ">=0.0.5" },
+    { name = "manim", specifier = ">=0.19" },
     { name = "manim", marker = "extra == 'render'", specifier = ">=0.20" },
     { name = "openai", specifier = ">=1.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.3" },
