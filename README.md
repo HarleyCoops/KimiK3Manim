@@ -410,9 +410,20 @@ claude mcp add kimi3manim -- uv --directory /path/to/KimiK3Manim run python mcp_
 
 ## Agent skill
 
-The same workflow ships as an Agent Skills package in
-[skills/kimi3manim/SKILL.md](skills/kimi3manim/SKILL.md) - install it
-into any skills-aware agent (Claude Code, Kimi Code):
+The same workflow ships as a skill in
+[skills/kimi3manim/SKILL.md](skills/kimi3manim/SKILL.md), authored in the
+[Hermes Agent](https://hermes-agent.nousresearch.com/) skill format
+(compatible with the agentskills.io standard used by Claude Code and
+Kimi Code).
+
+**Hermes Agent** - this repository is a published Hermes tap:
+
+```bash
+hermes skills tap add HarleyCoops/KimiK3Manim
+hermes skills install kimi3manim
+```
+
+**Claude Code / other skills-aware agents:**
 
 ```bash
 npx skills add HarleyCoops/KimiK3Manim
