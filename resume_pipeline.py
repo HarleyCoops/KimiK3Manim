@@ -22,9 +22,26 @@ from schemas import (
     VisualSpec,
 )
 
-RUN_DIR = Path(
-    "output/k3_runs/animate-an-epic--rigorous-derivation-of-the-euler-identity-e"
-)
+def latest_run_dir() -> Path:
+    """Most recently modified run directory that has stage 1-4 artifacts."""
+    root = Path("output/k3_runs")
+    candidates = [
+        d for d in root.iterdir()
+        if d.is_dir() and (d / "04_narrative.json").exists()
+    ]
+    if not candidates:
+        raise SystemExit(
+            "No resumable runs found under output/k3_runs "
+            "(need 01-04 artifacts)."
+        )
+    return max(candidates, key=lambda d: d.stat().st_mtime)
+
+
+if len(sys.argv) > 1:
+    RUN_DIR = Path(sys.argv[1])
+else:
+    RUN_DIR = latest_run_dir()
+print(f"[resume] using run dir: {RUN_DIR}", flush=True)
 
 
 def load(name, cls):
@@ -57,7 +74,7 @@ def main() -> None:
     while rounds <= sup.max_repair_rounds:
         sup._write_bundle(RUN_DIR, bundle)
         say(f"Render attempt {rounds + 1}")
-        ok, log, video = sup._render(RUN_DIR, bundle)
+        ok, log, video = sup._render(RUN_DIR, bundle, rounds + 1)
         if not ok:
             say("Render failed; sending traceback to coder")
             (RUN_DIR / f"render_log_round{rounds}.txt").write_text(
