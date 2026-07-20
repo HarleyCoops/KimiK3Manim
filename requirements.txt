@@ -1,6 +1,8 @@
-# Core dependencies for KimiK2Manim
+# Core dependencies for Kimi3Manim
 openai>=1.0.0  # OpenAI-compatible API client for Moonshot AI
 python-dotenv>=1.2.2  # For environment variable management
+kimi-agent-sdk>=0.0.5  # Subscription-mode runtime (Kimi Code CLI OAuth)
+manim>=0.19  # Rendering engine for the pipeline's scenes
 
 # Optional but recommended for development
 pytest>=9.0.3  # For testing

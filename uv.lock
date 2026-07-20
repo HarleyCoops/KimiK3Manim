@@ -1320,21 +1320,17 @@ dev = [
     { name = "black" },
     { name = "pytest" },
 ]
-render = [
-    { name = "manim" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "black", marker = "extra == 'dev'", specifier = ">=26.3.1" },
     { name = "kimi-agent-sdk", specifier = ">=0.0.5" },
     { name = "manim", specifier = ">=0.19" },
-    { name = "manim", marker = "extra == 'render'", specifier = ">=0.20" },
     { name = "openai", specifier = ">=1.0.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.0.3" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
 ]
-provides-extras = ["dev", "render"]
+provides-extras = ["dev"]
 
 [[package]]
 name = "kosong"

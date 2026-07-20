@@ -323,8 +323,7 @@ cd KimiK3Manim
 #   Windows:     powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
 uv python install 3.13
-uv sync
-uv pip install manim          # or: uv sync --extra render
+uv sync                       # installs everything, including manim
 ```
 
 ### 2. Authenticate (subscription by default)
