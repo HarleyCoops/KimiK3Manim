@@ -1,5 +1,7 @@
 # Kimi3Manim
 
+![Kimi3Manim - films imagined by the K3 agent swarm](assets/kimi3manim_hero.png)
+
 Math and physics animations imagined end-to-end by a swarm of **Kimi K3**
 agents and rendered with [Manim Community Edition](https://www.manim.community/).
 
@@ -384,6 +386,42 @@ See [Usage](#usage) above for concept ideas at every level, all options,
 and what a run produces.
 
 ---
+
+## MCP server
+
+Every pipeline operation is exposed as Model Context Protocol tools by
+[mcp_server.py](mcp_server.py), so any MCP client - Claude Code, Kimi
+Code, Claude Desktop, Zed - can drive Kimi3Manim from another project:
+
+| Tool | What it does |
+|---|---|
+| `check_environment` | Preflight (manim/ffmpeg/latex) plus auth-mode report |
+| `create_animation` | Full six-agent run: concept in, mp4 out |
+| `resume_run` | Resume a run at Stage 5 from saved artifacts |
+| `list_runs` | Enumerate runs, furthest stage, video paths |
+| `render_scene` | Re-render any scene file - no model calls |
+
+```bash
+# Claude Code
+claude mcp add kimi3manim -- uv --directory /path/to/KimiK3Manim run python mcp_server.py
+
+# Kimi Code: add the same command via /mcp-config
+```
+
+## Agent skill
+
+The same workflow ships as an Agent Skills package in
+[skills/kimi3manim/SKILL.md](skills/kimi3manim/SKILL.md) - install it
+into any skills-aware agent (Claude Code, Kimi Code):
+
+```bash
+npx skills add HarleyCoops/KimiK3Manim
+```
+
+The skill teaches the agent the full loop: preflight, phrasing concepts
+by audience level, run/resume/debug commands, where artifacts land, and
+the conventions (never send environment errors to the coder; always ship
+the mp4 even if the critic stage was unavailable).
 
 ## Configuration reference
 
