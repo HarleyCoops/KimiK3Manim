@@ -16,3 +16,9 @@ dev = [
     "pytest>=9.0.3",
     "black>=26.3.1",
 ]
+
+[tool.uv]
+# kimi-cli 1.12.0 pins pillow==12.1.0 (GHSA-v9pv-5gc8-w2m6, fixed in 13.0.0).
+# GitPython is a Python >=3.14 extra of batrachian-toad (GHSA-83vg-56qc-22m7).
+override-dependencies = ["pillow==13.0.0"]
+constraint-dependencies = ["gitpython>=3.2.1"]
